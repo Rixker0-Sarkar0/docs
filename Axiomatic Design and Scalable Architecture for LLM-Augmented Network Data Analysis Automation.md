@@ -180,6 +180,10 @@
 
 ## **References**
 
-### \[1\] Ollama. *Run Open Models Locally*. [https://ollama.com](https://ollama.com)  \[2\] NVIDIA. *GPU Plugin for Kubernetes*. [https://github.com/NVIDIA/k8s-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)  \[3\] Kubernetes Documentation. *StatefulSets and Autoscaling*. [https://kubernetes.io](https://kubernetes.io)  \[4\] LangChain, LlamaIndex. *Frameworks for RAG Orchestration*  \[5\] SPIFFE/SPIRE. *Zero Trust Identity Framework*
+### \[1\] Ollama. *Run Open Models Locally*. [https://ollama.com](https://ollama.com) 
+### \[2\] NVIDIA. *GPU Plugin for Kubernetes*. [https://github.com/NVIDIA/k8s-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)  
+### \[3\] Kubernetes Documentation. *StatefulSets and Autoscaling*. [https://kubernetes.io](https://kubernetes.io)  
+### \[4\] LangChain, LlamaIndex. *Frameworks for RAG Orchestration*  
+### \[5\] SPIFFE/SPIRE. *Zero Trust Identity Framework* ### 
 
-### 
+
