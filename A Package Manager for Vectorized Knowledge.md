@@ -1,28 +1,33 @@
-````markdown
 # RAGPack: Distributed Dataset Packaging and Discovery for RAG Systems
 
 ## Summary
 
-**RAGPack** introduces a unified format, CLI tool, and lightweight registry for building and distributing knowledge bases for Retrieval-Augmented Generation (RAG). Users can package pre-embedded datasets into portable `.ragpack` bundles, which can be locally queried, versioned, signed, and shared. RAGPack eliminates repeated scraping, redundant embedding, and chaotic dataset sharing.
+**RAGPack** is a CLI and package format standard for building portable, shareable, and locally-queryable knowledge bundles for Retrieval-Augmented Generation (RAG) systems. It eliminates redundant embedding, web scraping, and chaotic dataset versioning by allowing users to share `.ragpack` files like Python packages.
 
-## Architecture Overview
+## Key Features
 
-- 📁 **RAGPack Format**: Standardized folder structure for document storage, metadata, embeddings, and signature
-- 🛠️ **CLI Tool**: For creating, chunking, embedding, querying, packaging, installing, signing, verifying, diffing, and versioning ragpacks
-- 🌐 **Registry (FastAPI)**: Push/pull support for dataset hosting and discovery
+- 📦 `.ragpack` format: documents + embeddings + metadata
+- 🛠️ CLI tool: create, chunk, embed, query, pack, sign, verify, version
+- 🔐 GPG-based signing and trust
+- 🔢 Semantic versioning support
+- 🌐 Optional FastAPI registry backend for hosting/discovery
 
-## RAGPack Format
+---
+
+## Directory Structure
 
 ```text
 my-ragpack/
 ├── rag.json         # Metadata (name, license, embedding params, SPDX ID, version)
-├── docs/            # Source text documents
-├── chunks.jsonl     # Chunked documents
-├── embeddings.npy   # Precomputed embeddings
-└── signature.asc    # GPG signature (optional)
+├── docs/            # Source documents
+├── chunks.jsonl     # Chunked text
+├── embeddings.npy   # Embeddings
+├── signature.asc    # GPG signature (optional)
 ```
 
-## CLI Scaffold (Python)
+---
+
+## CLI Scaffold (`ragpack.py`)
 
 ```python
 import typer
@@ -47,24 +52,8 @@ def init(name: str):
     Path(name + "/rag.json").write_text(json.dumps(meta, indent=2))
 
 @app.command()
-def embed(path: str):
-    from sentence_transformers import SentenceTransformer
-    import numpy as np
-    import jsonlines
-
-    ragpath = Path(path)
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-
-    with jsonlines.open(ragpath / "chunks.jsonl") as reader:
-        chunks = [r["text"] for r in reader]
-    embeddings = model.encode(chunks)
-    np.save(ragpath / "embeddings.npy", embeddings)
-
-@app.command()
 def chunk(path: str):
-    from pathlib import Path
     import jsonlines
-
     chunks = []
     ragpath = Path(path)
     for file in (ragpath / "docs").glob("*.txt"):
@@ -75,16 +64,26 @@ def chunk(path: str):
         writer.write_all(chunks)
 
 @app.command()
+def embed(path: str):
+    from sentence_transformers import SentenceTransformer
+    import numpy as np
+    import jsonlines
+    ragpath = Path(path)
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    with jsonlines.open(ragpath / "chunks.jsonl") as reader:
+        chunks = [r["text"] for r in reader]
+    embeddings = model.encode(chunks)
+    np.save(ragpath / "embeddings.npy", embeddings)
+
+@app.command()
 def query(path: str, prompt: str):
     import numpy as np
     from sentence_transformers import SentenceTransformer
     from sklearn.metrics.pairwise import cosine_similarity
     import jsonlines
-
     ragpath = Path(path)
     model = SentenceTransformer("all-MiniLM-L6-v2")
     qvec = model.encode([prompt])
-
     embs = np.load(ragpath / "embeddings.npy")
     with jsonlines.open(ragpath / "chunks.jsonl") as reader:
         chunks = list(reader)
@@ -128,7 +127,6 @@ def verify(path: str):
 
 @app.command()
 def diff(p1: str, p2: str):
-    import json
     j1 = json.loads(Path(p1, "rag.json").read_text())
     j2 = json.loads(Path(p2, "rag.json").read_text())
     for k in j1:
@@ -138,9 +136,6 @@ def diff(p1: str, p2: str):
 @app.command()
 def version(path: str, bump: str = "patch"):
     p = Path(path) / "rag.json"
-    if not p.exists():
-        typer.echo("rag.json not found")
-        raise typer.Exit(1)
     meta = json.loads(p.read_text())
     current = meta.get("version", "0.1.0")
     if bump == "major":
@@ -157,7 +152,9 @@ if __name__ == "__main__":
     app()
 ```
 
-## Registry Backend Prototype (FastAPI)
+---
+
+## FastAPI Registry Server (`registry.py`)
 
 ```python
 from fastapi import FastAPI, UploadFile
@@ -169,6 +166,7 @@ app = FastAPI()
 @app.post("/upload")
 def upload(file: UploadFile):
     path = f"packs/{file.filename}"
+    os.makedirs("packs", exist_ok=True)
     with open(path, "wb") as f:
         f.write(file.file.read())
     return {"status": "uploaded", "file": file.filename}
@@ -178,23 +176,45 @@ def download(name: str):
     return FileResponse(f"packs/{name}")
 ```
 
-## Benefits
+---
 
-- 🔄 **Reusability**: No need to re-embed shared content
-- 🔐 **Trust**: Verify packs with GPG
-- 🚀 **Portability**: Distribute via `.ragpack` or pull from a central registry
-- ⚖️ **License-aware**: SPDX metadata enforced
-- 📦 **Versioned**: Track dataset evolution with SemVer
+## Usage Example
+
+```bash
+# Create and use your first pack
+python ragpack.py init my-pack
+python ragpack.py chunk my-pack
+python ragpack.py embed my-pack
+python ragpack.py query my-pack --prompt "What is RAG?"
+python ragpack.py pack my-pack
+python ragpack.py sign my-pack
+python ragpack.py verify my-pack
+python ragpack.py push my-pack http://localhost:8000
+python ragpack.py pull my-pack http://localhost:8000
+```
+
+---
 
 ## Roadmap
 
-- ✅ CLI for init, embed, query, pack, install, sign, verify, diff, version
-- ✅ FastAPI registry scaffold
-- 🔜 Web UI for browsing packs
+- ✅ MVP CLI (init, embed, query, pack, install, push, pull)
+- ✅ GPG-based signing and verification
+- ✅ Versioning and semver tracking
+- 🔜 Web UI for registry
+- 🔜 Ollama/LLM local integration
+
+---
 
 ## License
 
-MIT License. Contributions welcome.
+MIT License
 
-GitHub: [https://github.com/yourname/ragpack](https://github.com/yourname/ragpack)
-````
+---
+
+## Related Tools
+
+- [sentence-transformers](https://www.sbert.net/)
+- [FAISS](https://github.com/facebookresearch/faiss)
+- [SPDX](https://spdx.dev/)
+
+
