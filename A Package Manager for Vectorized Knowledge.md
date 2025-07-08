@@ -1,83 +1,66 @@
-# 📄 RAGPack: A Package Manager for Vectorized Knowledge
+# 📘 RAGPack: A Package Manager for Vectorized Knowledge
 
-## Abstract
-Retrieval-Augmented Generation (RAG) pipelines have become essential for making large language models (LLMs) context-aware and up-to-date. However, developers still rely on ad hoc methods such as web scraping, manual document parsing, and redundant embedding computations. This white paper proposes a new system: **RAGPack**, a standardized format and CLI tool that allows users to package, install, version, and query vectorized knowledge packs — similar to how `pip` and `npm` manage code dependencies.
-
----
-
-## Problem Statement
-
-Modern RAG workflows face several bottlenecks:
-
-- 🔍 **Web scraping** is brittle, slow, and legally questionable
-- 📄 **Chunking and embedding** documents is redundant across projects
-- 🔄 **No versioning** for knowledge bases or embeddings
-- 🧱 **Lack of modularity** and reuse for preprocessed data
-
+## Overview
+RAGPack is a proposed open format and command-line interface (CLI) tool for managing vectorized document knowledge used in Retrieval-Augmented Generation (RAG) systems. Inspired by the ease of use of `pip` and `npm`, RAGPack enables developers to package, install, query, and share reusable knowledge modules as `.ragpack` archives.
 
 ---
 
-## Vision: pip-for-RAG
+## Motivation
+Modern RAG pipelines suffer from redundancy and inefficiency:
+- 🔁 Repeated embedding of the same documents across teams
+- 🕸️ Reliance on brittle web scraping
+- 📦 No standard format for sharing knowledge bases
+- 🔐 Lack of provenance, licensing, and update mechanisms
 
-A system where knowledge is versioned, reusable, and can be installed like software packages.
+RAGPack solves this by treating knowledge as a modular, installable asset — eliminating the need to constantly rebuild local vector stores.
 
-```bash
-rag install @wikipedia/climate-change
-rag pull @arxiv/2025-08
-rag query "transformer loss functions"
-```
+---
 
-## What is a RAGPack?
+## Core Concept
 
-A `.ragpack` is a zip archive that contains:
+### What is a `.ragpack`?
+A `.ragpack` is a zipped knowledge bundle containing:
 
 ```text
-my-ragpack.ragpack
-├── rag.json           # Metadata
-├── chunks.jsonl       # Text chunks
-├── embeddings.npy     # Embedding matrix
-├── index.json         # Mapping chunk_id -> vector index
-├── LICENSE            # Usage rights
-└── README.md          # Documentation
+my-knowledge.ragpack
+├── rag.json         # Metadata
+├── chunks.jsonl     # Pre-chunked documents
+├── embeddings.npy   # Embedding vectors
+├── index.json       # Vector index (optional)
+├── LICENSE          # Usage terms
+└── README.md        # Description
 ```
 
----
-
-## Benefits
-
-| Feature           | Description                                  |
-|------------------|----------------------------------------------|
-| 📦 Reusability    | Embed once, reuse everywhere                 |
-| 🔄 Updatability   | Pull the latest docs or deltas               |
-| 🧠 Compatibility  | Works with any embedding model               |
-| 🔐 Trust & Licenses| Know where your knowledge comes from        |
+These packs are model-agnostic, self-contained, and reusable.
 
 ---
 
-## CLI Tool: `rag`
+## CLI Usage: `rag`
 
-### Basic Commands
+The `rag` CLI manages RAGPacks locally and remotely:
 
 ```bash
-rag init               # Scaffold new ragpack project
-rag embed docs/        # (planned) Embed local documents
-rag pack ./my-ragpack  # Create .ragpack archive
-rag install file.ragpack # Install from local file
-rag pull <name>        # (planned) Update from registry
-rag query "text"       # (planned) Search embeddings
+rag init                       # Start a new RAG project
+rag embed ./docs              # Chunk and embed documents
+rag pack ./myproject          # Build .ragpack file
+rag install file.ragpack      # Install a local package
+rag pull @org/topic           # (planned) Pull from registry
+rag query "search string"      # (planned) Semantic search
 ```
 
 ---
 
-## Registry Design (Future Work)
+## Registry Ecosystem
 
-Public and private registries will host `.ragpack`s:
+RAGPack supports both public and private knowledge registries:
 
-| Registry Name      | Description                        |
-|--------------------|------------------------------------|
-| `raghub.io`        | Public open knowledge              |
-| `ragcorp.internal` | Company private knowledge base     |
-| `rag.edu`          | Academic datasets & research       |
+| Registry             | Use Case                    |
+|----------------------|-----------------------------|
+| `raghub.io`          | Public open-source packs    |
+| `ragcorp.internal`   | Enterprise private packs    |
+| `rag.edu`            | Academic datasets           |
+
+Each pack is versioned, signed, and license-compliant.
 
 ---
 
@@ -85,40 +68,67 @@ Public and private registries will host `.ragpack`s:
 
 ```json
 {
-  "name": "my-ragpack",
-  "version": "0.1.0",
-  "description": "My first RAG pack",
-  "license": "CC-BY-4.0",
-  "chunking": {"method": "sliding_window"},
-  "embedding": {"model": "all-MiniLM-L6-v2"},
-  "created_at": "2025-07-08",
-  "maintainers": ["@you"]
+  "name": "@myorg/product-docs",
+  "version": "0.3.1",
+  "license": "MIT",
+  "description": "Customer-facing API documentation",
+  "embedding": { "model": "all-MiniLM-L6-v2" },
+  "chunking": { "method": "sliding_window" },
+  "created_at": "2025-07-08"
 }
 ```
 
 ---
 
-### Commands Supported
+## Roadmap
 
-- `rag init`
-- `rag pack <folder>`
-- `rag install <file>`
+### ✅ 1. MVP CLI Tool
+- `rag init`, `rag pack`, `rag install`
+
+### 🧱 2. Embedding + Chunking Pipeline
+- Support local doc embedding via standard models
+- Save results as `chunks.jsonl` + `embeddings.npy`
+
+### 🔍 3. Local Querying
+- Run `rag query "prompt"`
+- Return top-k semantically matched chunks
+
+### 📦 4. Registry Hosting + Push/Pull
+- Push/pull packs from centralized registry
+- SHA integrity, optional GPG signatures
+
+### 🔐 5. Digital Signing + License Compliance
+- SPDX support, signature verification
+- `LICENSES.txt` manifest for included content
 
 ---
 
-## Roadmap
+## Benefits
 
-1. ✅ MVP CLI tool
-2. 🔜 Embedding + chunking pipeline
-3. 🔜 Local querying
-4. 🔜 Registry hosting + push/pull
-5. 🔜 Digital signing + license compliance
+| Benefit         | Description                                 |
+|----------------|---------------------------------------------|
+| ♻️ Reusable     | Share packs across teams and use cases      |
+| 🧠 Model-agnostic | Use any local embedding model               |
+| ⏱️ Time-saving   | Avoid repeated scraping and embedding       |
+| 📜 Compliant     | Enforce license and origin transparency     |
+
+---
+
+## Sample Python Scaffold
+
+```python
+# rag_cli_tool.py (snippet)
+import argparse
+import json
+from zipfile import ZipFile
+
+# Commands: init, pack, install
+# Future: embed, query, pull, push
+```
 
 ---
 
 ## Conclusion
-
-RAGPack bridges the gap between data preparation and production-grade RAG systems. With it, teams can stop rebuilding the same pipelines and start sharing clean, queryable knowledge just like code. It aims to become the package manager for knowledge itself.
+RAGPack introduces a modular, secure, and shareable way to build and deploy RAG systems. By treating knowledge like code dependencies, it accelerates prototyping, simplifies updates, and supports reproducible AI pipelines.
 
 ---
-
