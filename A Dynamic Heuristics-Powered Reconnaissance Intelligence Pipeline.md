@@ -89,7 +89,6 @@ ReconMem builds a continuously evolving recon engine, combining pattern-based pr
 - `llm_suggester.py`
 - `merge_and_review.py`
 
----
-Author: *Your Name*  
+---  
 License: MIT  
 Date: July 2025
