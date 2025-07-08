@@ -98,20 +98,6 @@ Public and private registries will host `.ragpack`s:
 
 ---
 
-## Tool Scaffold (Python Prototype)
-
-```python
-# rag_cli_tool.py
-import argparse
-import os
-import json
-import zipfile
-import numpy as np
-from pathlib import Path
-
-# ... see full CLI code in repo
-```
-
 ### Commands Supported
 
 - `rag init`
