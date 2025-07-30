@@ -2,9 +2,6 @@
 
 A modular, resettable, enterprise-ready Windows architecture — inspired by NixOS, Fedora Silverblue, and immutable OS concepts.
 
-> **This is the only file in this repository. All documentation and logic are contained below.**
-
----
 
 ## 🚀 Overview
 
@@ -22,7 +19,6 @@ This project transforms Windows into an **immutable operating system** using:
 - Education & training labs  
 - Secure kiosks or shared terminals  
 - Enterprise policy-controlled endpoints
----
 
 ## 🧩 Architecture
 
@@ -40,7 +36,6 @@ This project transforms Windows into an **immutable operating system** using:
   - Deletes `WindowsWorking.vhdx`  
   - Recopies from `WindowsBase.vhdx`  
 - Enables reproducibility and rollback
----
 
 ## 🔐 System Lockdown
 
@@ -58,7 +53,6 @@ This project transforms Windows into an **immutable operating system** using:
 - NTFS lockdown on system and VHD paths  
 - Auto-login or shell override to enter VHD  
 - AppLocker or WDAC policy enforcement
----
 
 ## 🖥️ Tools
 
@@ -72,7 +66,7 @@ This project transforms Windows into an **immutable operating system** using:
 
 ### 6. CLI Script: `winvhd-cli.ps1`
 
-```powershell
+```powershell```
 winvhd-cli.ps1 -Action <action> [-SnapshotName <name>]
 
 Actions:
@@ -82,7 +76,6 @@ Actions:
   snapshot             # Save current working VHD state
   restore              # Restore a named snapshot
   list                 # Show snapshot list
----
 
 ## 🧠 Snapshots
 
@@ -90,7 +83,6 @@ Actions:
 - Used for version control, testing, backups  
 - Snapshots can be made from working VHD or restored at any time
 
----
 
 ## ☁️ Enterprise Integration
 
@@ -103,7 +95,6 @@ Actions:
   - Defender ATP  
   - Sysmon / SIEM  
   - BitLocker key escrow
----
 
 ## 📁 Repo Contents
 
@@ -117,7 +108,6 @@ This is a single-file project containing all reference material:
 
 No other code or files are provided — integrate manually or build using this guide.
 
----
 
 ## 🛠️ Roadmap
 
@@ -126,7 +116,6 @@ No other code or files are provided — integrate manually or build using this g
 - [x] Scheduled reset service  
 - [x] Web dashboard for VHD management  
 - [x] PXE boot + VHD overlay support
----
 
 ## 💡 Credits & Inspiration
 
@@ -137,12 +126,10 @@ No other code or files are provided — integrate manually or build using this g
 
 Built with PowerShell, .NET Framework, and native Windows components.
 
----
 
 ## 📄 License
 
 MIT License — use, modify, or distribute freely for personal or organizational purposes.
 
----
 
 > **Windows as a reproducible, hardened, and resettable platform — built from native tools.**
