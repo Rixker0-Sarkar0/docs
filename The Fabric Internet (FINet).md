@@ -132,20 +132,7 @@ The world becomes one massive **computer**, not just a network.
 
 ---
 
-## 8. Suggested Repo Layout (for later)  
-
-```
-/README.md        ← This file (main manifesto)
-/docs/            ← Detailed RFC drafts, design notes
-/protocol/        ← FINet protocol sketches, PoCs
-/diagrams/        ← ASCII & visual architecture diagrams
-/usecases/        ← AI, finance, IoT, etc.
-/roadmap/         ← Evolution phases & adoption strategies
-```
-
----
-
-## 9. Conclusion  
+## 8. Conclusion  
 The internet evolved from:  
 - **Documents** (WWW) →  
 - **Applications** (Web 2.0, cloud) →  
