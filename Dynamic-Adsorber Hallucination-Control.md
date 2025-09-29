@@ -1,6 +1,5 @@
 # Dynamic-Adsorber Hallucination-Control: A Conceptual Approach to Reducing LLM Hallucinations
 
-**Author:** [Your Name]  
 **Date:** 2025  
 **License:** CC0 1.0 (Public Domain)
 
