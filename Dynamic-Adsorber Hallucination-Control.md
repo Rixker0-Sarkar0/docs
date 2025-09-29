@@ -25,19 +25,35 @@ Hallucinations arise when LLMs attempt to produce outputs for queries in underre
 4. **Injection into Model (`h̃_t`):** Stabilized guidance added to hidden states to bias generation toward supported content.
 
 ---
-## 3. Unified Equation
+## 3. Unified Equation (Redivided)
 
 A compact representation of the system:
 
-h̃_t = h_t + sum_{τ=1}^{t} α * (1 - α)^(t - τ) * σ( W_h * h_τ + W_s * S(x) + W_H * H(x) + b )
+```
+h̃_t = h_t
+       + sum_{τ=1}^{t} [ α * (1 - α)^(t - τ) ]     # damping over past steps
+         * σ( W_h * h_τ                              # transformed hidden state
+               + W_s * S(x)                           # missingness / density
+               + W_H * H(x)                           # optional entropy/uncertainty
+               + b )                                  # bias
+```
 
-Where:  
-- h_t = hidden state at token t  
-- S(x) = missingness / density score  
-- H(x) = optional per-token entropy / uncertainty  
-- E_t = dynamic guidance output  
-- G_t = stabilized guidance (adsorber)  
-- α = damping / low-pass coefficient
+  
+### Variables
+
+| Variable | Description |
+|----------|-------------|
+| `h_t` | Hidden state of the LLM at token `t`. Represents the model’s current internal representation. |
+| `h̃_t` | Stabilized hidden state after adding dynamic guidance. This is the modified state used for output. |
+| `τ` | Index over previous tokens/steps (1 to t) used in the summation for dynamic guidance. |
+| `α` | Damping / low-pass coefficient controlling how past guidance decays over time. |
+| `σ` | Activation function applied to the guidance signal (e.g., sigmoid or tanh). |
+| `W_h` | Weight matrix applied to the hidden state `h_τ`. Transforms past hidden states for guidance. |
+| `W_s` | Weight matrix applied to the missingness / density score `S(x)`. Scales influence of query sparsity. |
+| `S(x)` | Missingness or density score of the current query `x`. Higher values indicate sparse reference data. |
+| `W_H` | Weight matrix applied to optional per-token uncertainty/entropy `H(x)`. Adjusts guidance based on model uncertainty. |
+| `H(x)` | Optional per-token entropy or uncertainty measure. Captures local model confidence. |
+| `b` | Bias term added to the guidance computation. |
 
 ---
 
