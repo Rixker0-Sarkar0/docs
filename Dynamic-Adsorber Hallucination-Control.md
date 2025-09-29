@@ -26,21 +26,19 @@ Hallucinations arise when LLMs attempt to produce outputs for queries in underre
 4. **Injection into Model (`h̃_t`):** Stabilized guidance added to hidden states to bias generation toward supported content.
 
 ---
-
 ## 3. Unified Equation
-A compact representation:
 
-\[
-\tilde{h}_t = h_t + \sum_{\tau=1}^{t} \alpha (1-\alpha)^{t-\tau} \, \sigma\Big( W_h h_\tau + W_s S(x) + W_H H(x) + b \Big)
-\]
+A compact representation of the system:
+
+h̃_t = h_t + sum_{τ=1}^{t} α * (1 - α)^(t - τ) * σ( W_h * h_τ + W_s * S(x) + W_H * H(x) + b )
 
 Where:  
-- \(h_t\) = hidden state at token t  
-- \(S(x)\) = missingness / density score  
-- \(H(x)\) = optional per-token entropy  
-- \(E_t\) = dynamic guidance output  
-- \(G_t\) = stabilized guidance (adsorber)  
-- \(\alpha\) = damping / low-pass coefficient
+- h_t = hidden state at token t  
+- S(x) = missingness / density score  
+- H(x) = optional per-token entropy / uncertainty  
+- E_t = dynamic guidance output  
+- G_t = stabilized guidance (adsorber)  
+- α = damping / low-pass coefficient
 
 ---
 
